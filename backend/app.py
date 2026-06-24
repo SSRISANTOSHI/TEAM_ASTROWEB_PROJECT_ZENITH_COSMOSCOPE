@@ -63,14 +63,25 @@ def cosmic_data():
                 except Exception:
                     pass
 
-        weather       = get_weather(lat, lon)
-        iss_pos       = get_iss(target_date)
-        sat_info      = get_satellites()
-        planet_info   = get_planets(lat, lon, target_date)
-        iss_passes    = get_iss_passes(lat, lon, target_date)
-        light_pol     = get_light_pollution(lat, lon)
+        from concurrent.futures import ThreadPoolExecutor
+        
+        with ThreadPoolExecutor(max_workers=7) as executor:
+            fut_weather = executor.submit(get_weather, lat, lon)
+            fut_iss = executor.submit(get_iss, target_date)
+            fut_satellites = executor.submit(get_satellites)
+            fut_planets = executor.submit(get_planets, lat, lon, target_date)
+            fut_passes = executor.submit(get_iss_passes, lat, lon, target_date)
+            fut_light_pollution = executor.submit(get_light_pollution, lat, lon)
+            fut_space_weather = executor.submit(get_space_weather, lat, lon, target_date)
 
-        space_weather = get_space_weather(lat, lon, target_date)
+            weather = fut_weather.result()
+            iss_pos = fut_iss.result()
+            sat_info = fut_satellites.result()
+            planet_info = fut_planets.result()
+            iss_passes = fut_passes.result()
+            light_pol = fut_light_pollution.result()
+            space_weather = fut_space_weather.result()
+
         space_risk    = calculate_space_risk(sat_info, space_weather, lat, lon, target_date)
         photo_advisor = get_photography_settings(weather, planet_info, light_pol)
 
