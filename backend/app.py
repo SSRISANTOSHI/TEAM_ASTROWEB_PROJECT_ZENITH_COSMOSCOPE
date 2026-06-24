@@ -2,7 +2,7 @@ import math
 import os
 import logging
 from datetime import datetime, timezone
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 from database import db
@@ -25,7 +25,8 @@ from services import (
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
-app = Flask(__name__)
+frontend_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend", "build"))
+app = Flask(__name__, static_folder=frontend_folder, static_url_path="/")
 CORS(app)
 
 # MySQL Connection Pool initialization
@@ -297,6 +298,18 @@ def chat():
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok"})
+
+
+# Serve React App
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve(path):
+    if path.startswith("api/") or path == "health":
+        return jsonify({"error": "Not Found"}), 404
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, "index.html")
 
 
 if __name__ == "__main__":
