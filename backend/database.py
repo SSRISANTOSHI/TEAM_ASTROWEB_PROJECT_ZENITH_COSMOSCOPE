@@ -12,9 +12,21 @@ class DatabaseManager:
 
     def init_app(self, app=None):
         # Retrieve and parse connection info
-        db_url = os.getenv("DATABASE_URL")
+        # When running externally (e.g. Render, local), we must use the public URL
+        is_on_railway = os.getenv("RAILWAY_ENVIRONMENT_NAME") is not None or os.getenv("RAILWAY_STATIC_URL") is not None
+        
+        db_url = None
+        
+        if not is_on_railway:
+            db_url = os.getenv("MYSQL_PUBLIC_URL") or os.getenv("MYSQLPUBLICURL")
+            
         if not db_url:
-            db_url = os.getenv("MYSQL_URL") or os.getenv("MYSQL_PUBLIC_URL")
+            db_url = os.getenv("DATABASE_URL") or os.getenv("MYSQL_URL")
+            
+        if db_url and ".internal" in db_url and not is_on_railway:
+            public_url = os.getenv("MYSQL_PUBLIC_URL") or os.getenv("MYSQLPUBLICURL")
+            if public_url:
+                db_url = public_url
 
         db_config = {}
 
