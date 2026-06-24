@@ -5,18 +5,25 @@ COSMOSCOPE: Zenith Astronomical Digital Twin & Telemetry Hub
 Team Name: AstroWeb
  
 1. Project Overview
+
 COSMOSCOPE is an immersive Astronomical Digital Twin and Live Telemetry Dashboard developed for Project Zenith: The Celestial Eye. The platform enables users to explore celestial phenomena above any location on Earth through interactive visualization, real-time satellite telemetry, astronomical predictions, and artificial intelligence-powered insights.
 The system combines modern web technologies, orbital mechanics, space weather intelligence, and geospatial visualization to transform complex astronomical data into an engaging and educational user experience.
 COSMOSCOPE bridges the gap between raw astrophysical information and intuitive exploration by providing a real-time cosmic radar capable of tracking orbital objects, evaluating sky conditions, and generating astronomy narratives.
  
 2. Live Deployment
+
 Frontend Application
+
 https://team-astroweb-project-zenith-cosmos.vercel.app/
+
 Backend API
+
 https://team-astroweb-project-zenith-cosmoscope.onrender.com
  
 3. Website Functionality and Unique Features
+
 3.1 3D Space Digital Twin
+
 The platform utilizes CesiumJS and Three.js to create a high-fidelity digital twin of Earth and its surrounding orbital environment.
 Key Features:
 • Real-time 3D Earth visualization
@@ -26,6 +33,7 @@ Key Features:
 • Dynamic WebGL starfield rendering
  
 3.2 Cosmic Situation Awareness Index (CSAI)
+
 COSMOSCOPE introduces a proprietary suitability scoring system that evaluates astronomical observation conditions for any selected location.
 The CSAI score considers:
 • Cloud coverage
@@ -36,6 +44,7 @@ The CSAI score considers:
 The resulting score provides users with an overall astronomical observation suitability percentage.
  
 3.3 Digital Twin Time Travel Engine
+
 The platform enables users to analyze both historical and future astronomical conditions.
 Capabilities include:
 • Planet position prediction
@@ -45,6 +54,7 @@ Capabilities include:
 The prediction engine is powered by PyEphem orbital calculations.
  
 3.4 Space Weather and Risk Monitoring
+
 COSMOSCOPE integrates live space weather intelligence to enhance situational awareness.
 Features include:
 • Solar flare monitoring
@@ -54,6 +64,7 @@ Features include:
 • Orbital congestion assessment
  
 3.5 Astrophotography Exposure Advisor
+
 The system assists astronomy enthusiasts and photographers by recommending optimal observation and imaging parameters.
 Recommendations include:
 • Exposure duration
@@ -63,6 +74,7 @@ Recommendations include:
 • Photography quality estimation
  
 3.6 AI Astronomy Narrator
+
 An AI-powered astronomy assistant generates contextual explanations for celestial events and visible astronomical objects.
 Capabilities include:
 • Astronomy question answering
@@ -73,19 +85,28 @@ Capabilities include:
 The assistant is powered by Google's Gemini 2.5 Flash model with a deterministic fallback engine.
  
 4. System Architecture
+
 The application follows a client-server architecture.
+
 Frontend Layer:
+
 • React.js
 • CesiumJS
 • Three.js
 • Resium
+
 Backend Layer:
+
 • Flask REST API
 • PyEphem Computation Engine
 • Telemetry Processing Engine
+
 Database Layer:
+
 • MySQL Database
+
 External Data Sources:
+
 • Open-Meteo
 • NOAA SWPC
 • CelesTrak
@@ -94,6 +115,7 @@ External Data Sources:
 • Gemini AI
  
 5. Concurrency and Performance Optimization
+6. 
 To improve responsiveness and reduce latency, the backend employs a parallel execution model using ThreadPoolExecutor.
 Parallel tasks include:
 1.	Weather retrieval
@@ -106,6 +128,7 @@ Parallel tasks include:
 This architecture significantly reduces response time and ensures a smooth user experience.
  
 6. Dependencies
+   
 Frontend Technologies
 • React 18
 • CesiumJS
