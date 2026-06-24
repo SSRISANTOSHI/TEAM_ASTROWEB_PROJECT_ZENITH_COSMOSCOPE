@@ -28,17 +28,8 @@ logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 CORS(app)
 
-# MySQL configuration
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-    "DATABASE_URL",
-    "mysql+mysqlconnector://root:password@localhost/cosmoscope",
-)
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
+# MySQL Connection Pool initialization
 db.init_app(app)
-
-with app.app_context():
-    db.create_all()
 
 
 def _safe_float(value, default, min_val, max_val):
@@ -91,20 +82,34 @@ def cosmic_data():
         congestion_pct = round(min(active / 10000 * 100, 100), 1)
 
         # Persist to MySQL
+        conn = None
         try:
-            record = LocationQuery(
-                name=location_name,
-                lat=lat,
-                lon=lon,
-                csai=csai,
-                cloud_cover=weather.get("cloud_cover"),
-                visible_objects=",".join(planet_info.get("visible_objects", [])),
-            )
-            db.session.add(record)
-            db.session.commit()
+            conn = db.get_connection()
+            cursor = conn.cursor()
+            insert_sql = """
+            INSERT INTO location_queries (name, lat, lon, csai, cloud_cover, visible_objects, queried_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            now_utc = datetime.now(timezone.utc)
+            cursor.execute(insert_sql, (
+                location_name,
+                lat,
+                lon,
+                csai,
+                weather.get("cloud_cover"),
+                ",".join(planet_info.get("visible_objects", [])),
+                now_utc
+            ))
+            conn.commit()
+            cursor.close()
         except Exception as db_err:
-            db.session.rollback()
             app.logger.warning("DB write failed (non-fatal): %s", db_err)
+        finally:
+            if conn:
+                try:
+                    conn.close()
+                except Exception:
+                    pass
 
         return jsonify({
             "location":        {"lat": lat, "lon": lon, "name": location_name},
@@ -141,11 +146,27 @@ def iss_position():
 @app.route("/api/history", methods=["GET"])
 def query_history():
     """Return last 20 location queries stored in MySQL."""
+    conn = None
     try:
-        rows = LocationQuery.query.order_by(LocationQuery.queried_at.desc()).limit(20).all()
-        return jsonify([r.to_dict() for r in rows])
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, name, lat, lon, csai, cloud_cover, visible_objects, queried_at FROM location_queries ORDER BY queried_at DESC LIMIT 20")
+        rows = cursor.fetchall()
+        cursor.close()
+        
+        history = []
+        for r in rows:
+            history.append(LocationQuery.from_row(r).to_dict())
+            
+        return jsonify(history)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    finally:
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass
 
 
 @app.route("/api/leaderboard", methods=["GET"])

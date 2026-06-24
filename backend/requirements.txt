@@ -3,6 +3,5 @@ flask-cors==5.0.1
 requests==2.33.0
 python-dotenv==1.2.2
 ephem==4.1.6
-flask-sqlalchemy==3.1.1
 mysql-connector-python==9.3.0
 gunicorn
