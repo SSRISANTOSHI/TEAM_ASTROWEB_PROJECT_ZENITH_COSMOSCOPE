@@ -177,4 +177,4 @@ Planned enhancements include:
 10. Conclusion
 COSMOSCOPE demonstrates the vision of Project Zenith: The Celestial Eye by transforming astronomical data into an accessible, interactive, and educational platform. Through real-time telemetry, predictive astronomy, artificial intelligence, and immersive visualization, the project enables users to explore and understand the dynamic sky above any location on Earth.
 
-<img width="468" height="601" alt="image" src="https://github.com/user-attachments/assets/9937082d-99a8-44d1-9f8a-99a35e96394e" />
+
